@@ -1,5 +1,5 @@
 /*
-  @file conversion.c  
+  @file conversion.h
   @brief This file is the header file for conversion.c
 
   @author Stephen Bowern
