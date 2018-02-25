@@ -20,11 +20,14 @@
  * @param none
  * @return void
  */
-void UART_configure()
+void UART_configure(uint32_t baudrate)
 {
 	/*configure baud rate*/
 
 	/*configure frame*/
+	UART0->BDH |=
+	UART0->BDH = UART0_BDH_SBR_MASK |= ;
+	UART0->BDL = ;
 }
 
 /*

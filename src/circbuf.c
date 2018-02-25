@@ -24,7 +24,7 @@
 CB_e CB_init(CB_t **buf, size_t length)
 {
 	/*allocate buffer structure*/
-	(*buf) = (CB_t *) malloc(length * sizeof(CB_t));
+	(*buf) = (CB_t *) malloc(sizeof(CB_t));
 
 	if(*buf == NULL)
 		return CB_NULL_PTR_ERROR;

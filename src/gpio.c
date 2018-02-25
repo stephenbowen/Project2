@@ -1,22 +1,16 @@
 /*
- * @file gpio.h  
- * @brief This file is the header file for gpio.c.
+ * @file gpio.c
+ * @brief This file configures GPIO and toggles LEDs
  *
  * @author Stephen Bowern
- * @date Feb 16, 2018
+ * @date Feb 24, 2018
  */
 
 #include <stdio.h>
 #include <stdint.h>
+#include "gpio.h"
 #include "MKL25Z4.h"
-
-#define GPIO_RED_OFFSET   18
-#define GPIO_GREEN_OFFSET 19
-#define GPIO_BLUE_OFFSET   1
-
-#define RGB_RED_PIN   (GPIOB + GPIO_RED_OFFSET)
-#define RGB_GREEN_PIN (GPIOB + GPIO_GREEN_OFFSET)
-#define RGB_BLUE_PIN  (BPIOD + GPIO_BLUE_OFFSET)
+#include "bsp.h"
 
 /*
  * @brief This function configures LED ports of the processor
@@ -27,7 +21,24 @@
  * @param none
  * @return void
  */
-static inline void GPIO_configure();
+void GPIO_configure()
+{
+	/*enable clock gating*/
+	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+
+	/*set LED pins to output*/
+	GPIOB_PDDR |= (1 << GPIO_RED_OFFSET);
+	GPIOB_PDDR |= (1 << GPIO_GREEN_OFFSET);
+	GPIOD_PDDR |= (1 << GPIO_BLUE_OFFSET);
+	
+	/*set LED initial values to be on*/
+	GPIOB_PSOR |= (1 << GPIO_RED_OFFSET);
+	GPIOB_PSOR |= (1 << GPIO_GREEN_OFFSET);
+	GPIOD_PSOR |= (1 << GPIO_BLUE_OFFSET);
+
+	return;
+}
 
 /*
  * @brief This function toggles the state of the red LED.
@@ -35,7 +46,12 @@ static inline void GPIO_configure();
  * @param none
  * @return void
  */
-static inline void Toggle_Red_LED();
+void Toggle_Red_LED()
+{
+	GPIOB_PTOR |= (1 << GPIO_RED_OFFSET);
+
+	return;
+}
 
 /*
  * @brief This function sets GPIO values
@@ -46,7 +62,12 @@ static inline void Toggle_Red_LED();
  * @param uint8_t
  * @return void
  */
-static inline void PORTB_Set(uint8_t);
+void PORTB_Set(uint8_t bit_num)
+{
+	GPIOB_PSOR |= (1 << bit_num);
+
+	return;
+}
 
 /*
  * @brief This function sets GPIO values
@@ -57,7 +78,12 @@ static inline void PORTB_Set(uint8_t);
  * @param uint8_t
  * @return void
  */
-static inline void PORTD_Set(uint8_t);
+void PORTD_Set(uint8_t bit_num)
+{
+	GPIOD_PSOR |= (1 << bit_num);
+
+	return;
+}
 
 /*
  * @brief This function clears GPIO values
@@ -68,7 +94,12 @@ static inline void PORTD_Set(uint8_t);
  * @param uint8_t
  * @return void
  */
-static inline void PORTB_Clear(uint8_t);
+void PORTB_Clear(uint8_t bit_num)
+{
+	GPIOB_PCOR |= (1 << bit_num);
+
+	return;
+}
 
 /*
  * @brief This function clears GPIO values
@@ -79,7 +110,12 @@ static inline void PORTB_Clear(uint8_t);
  * @param uint8_t
  * @return void
  */
-static inline void PORTD_Clear(uint8_t);
+void PORTD_Clear(uint8_t bit_num)
+{
+	GPIOD_PCOR |= (1 << bit_num);
+
+	return;
+}
 
 /*
  * @brief This function toggles GPIO values
@@ -90,7 +126,12 @@ static inline void PORTD_Clear(uint8_t);
  * @param uint8_t
  * @return void
  */
-static inline void PORTB_Toggle(uint8_t);
+void PORTB_Toggle(uint8_t bit_num)
+{
+	GPIOB_PTOR |= (1 << bit_num);
+
+	return;
+}
 
 /*
  * @brief This function toggles GPIO values
@@ -101,4 +142,9 @@ static inline void PORTB_Toggle(uint8_t);
  * @param uint8_t
  * @return void
  */
-static inline void PORTD_Toggle(uint8_t);
+void PORTD_Toggle(uint8_t bit_num)
+{
+	GPIOD_PTOR |= (1 << bit_num);
+
+	return;
+}

@@ -16,10 +16,10 @@
  * This function configures the UART registers to their appropriate values
  * for propper UART operation
  *
- * @param none
+ * @param uint32_t
  * @return void
  */
-void UART_configure();
+void UART_configure(uint32_t);
 
 /*
  * @brief This function transmits a byte of data.

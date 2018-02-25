@@ -18,8 +18,8 @@ typedef struct
 	volatile uint8_t *base_p;  /*CB base pointer */
 	volatile uint8_t *head_p;  /*CB head pointer */
 	volatile uint8_t *tail_p;  /*CB tail pointer */
-	size_t length;             /*length of the CB*/
-	size_t count;              /*number of elements in the CB*/
+	volatile size_t length;    /*length of the CB*/
+	volatile size_t count;     /*number of elements in the CB*/
 } CB_t;
 
 /*Circular Buffer status status enumberation definition*/
