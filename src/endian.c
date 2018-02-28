@@ -25,34 +25,27 @@
 
   @return int32_t
 */
-int32_t swap_data_endianness(uint8_t *data, size_t type_length)
+int32_t swap_data_endianness(uint32_t *data, size_t type_length)
 {
-  uint8_t temp[type_length];    /*temporary storage for data bytes*/
-  uint8_t *ptr = temp;
-  uint8_t *origin;              /*set the origin address for later retreival*/
-  origin = data;
-
+	/*check for valid pointer*/
   if(data == 0)
     return SWAP_ERROR;
+
+	/*swap endianness with bit manipulation based on size 8, 16, or 32 bit*/
+	if(type_length == 1)                      /*8 bit*/
+		;
+	else if(type_length == 2)                 /*16 bit*/
+		*data = (((*data & 0x00FF) << 8) |
+             ((*data & 0xFF00) >> 8));
+
+	else if(type_length == 4)                 /*32 bit*/
+		*data = (((*data & 0x000000FF) << 24) |
+             ((*data & 0x0000FF00) <<  8) |
+             ((*data & 0x00FF0000) >>  8) |
+             ((*data & 0xFF000000) >> 24));
+	else                                      /*invalid size entered*/
+		return SWAP_ERROR;
   
-  /*copy bytes from data to temp*/
-  for(int x = 1 ; x < type_length ; x++)
-  {
-    *ptr = *data;
-    ptr++;
-    data++;
-  }
-  data = origin;                /*reset data pointer back to its origin*/
-
-  /*copy bytes from temp back to data in reverse order*/
-  for(int x = type_length ; x > 0 ; x--)
-  {
-    *data = *ptr;
-    data++;
-    ptr--;
-  }
-  data = origin;
-
   return SWAP_NO_ERROR;
 }
 

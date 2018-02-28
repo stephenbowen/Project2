@@ -22,7 +22,9 @@ int main()
 	//memset_test();
 	//memzero_test();
 	//reverse_test();
-	conversion_test();
+	//conversion_test();
+	//endian_test();
+	buf_test();
 	return 0;
 }
 
@@ -522,7 +524,39 @@ void conversion_test()
  * @param none
  * @return void
  */
-void endian_test();
+void endian_test()
+{
+
+	printf("ENDIAN TEST\n");
+
+	int8_t ret;
+	uint32_t data = 0x12345678;  /*data to be swapped*/
+	uint32_t temp = data;        /*data to be determine successful swap*/
+
+	/*display data to be pre-swap*/
+	printf("B-L pre-swap:  %X\n", data);
+
+	ret = swap_data_endianness((uint32_t *) &data, sizeof(data));
+
+	/*display data to be post-swap*/
+	printf("L-B post-swap: %X\n", data);
+
+	/*display data to be pre-swap*/
+	printf("L-B pre-swap:  %X\n", data);
+
+	ret = swap_data_endianness((uint32_t *) &data, sizeof(data));
+
+	/*display data to be post-swap*/
+	printf("B-L post-swap: %X\n", data);
+
+	/*test for correct swap operation*/
+	if((ret == 0) && (data == temp))
+		printf("Pass: Successful Swap\n\n");
+	else
+		printf("Fail: Unsuccessful Swap\n\n");
+
+	return;
+}
 
 /*
  * @brief This function tests the circular buffer functions.
@@ -530,4 +564,9 @@ void endian_test();
  * @param none
  * @return void
  */
-void buf_test();
+void buf_test()
+{
+
+
+	return;
+}

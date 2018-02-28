@@ -23,7 +23,7 @@
 
   @return int32_t
 */
-int32_t swap_data_endianness(uint8_t *, size_t);
+int32_t swap_data_endianness(uint32_t *, size_t);
 
 /*
   @brief This function determines endianness of a value.
