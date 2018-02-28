@@ -102,7 +102,7 @@ __attribute__((always_inline)) inline CB_e CB_is_full(CB_t *);
  * @param CB_t *
  * @return CB_e (circular buffer enumeration)
  */
-__attribute__((always_inline)) inline CB_e CB_is_empty(CB_t *);
+__attribute__((always_inline)) static inline CB_e CB_is_empty(CB_t *);
 
 /*
  * @brief This function peeks at a given data value.

@@ -25,6 +25,9 @@
  */
 uint32_t ARM32_AIRCR_get_endianness_setting()
 {
+	volatile uint32_t *ptr;
+	ptr = (uint32_t *)__AIRCR;
+
   return ((__AIRCR_ENDIANNESS_MASK) >> __AIRCR_ENDIANNESS_OFFSET);
 }
 
@@ -37,11 +40,12 @@ uint32_t ARM32_AIRCR_get_endianness_setting()
  * @param  none
  * @return uint32_t
  */
-uint32_t ARM32_CCR_get_stack_alignment() __attribute__((always_inline))
+uint32_t ARM32_CCR_get_stack_alignment()
 {
-	
+	volatile uint32_t *ptr;
+	ptr = (uint32_t *)__CCR;
 
-	return ;
+	return ((*ptr & __CCR_STK_ALIGNMENT_MASK) >> __CCR_STK_ALIGNMENT_OFFSET);
 }
 
 /*
@@ -53,7 +57,13 @@ uint32_t ARM32_CCR_get_stack_alignment() __attribute__((always_inline))
  * @param  none
  * @return uint32_t
  */
-uint32_t ARM32_CPUID_get_part_number() __attribute__((always_inline));
+uint32_t ARM32_CPUID_get_part_number()
+{
+	volatile uint32_t *ptr;
+	ptr = (uint32_t *)__CPUID;
+
+	return ((*ptr & __CPUID_PART_NO_MASK) >> __CPUID_PART_NO_OFFSET);
+}
 
 /*
  * @brief This function enables the divide by zero trap.
@@ -64,7 +74,13 @@ uint32_t ARM32_CPUID_get_part_number() __attribute__((always_inline));
  * @param  none
  * @return void
  */
-void ARM32_CCR_enable_divide_by_zero_trap() __attribute__((always_inline));
+void ARM32_CCR_enable_divide_by_zero_trap()
+{
+	volatile uint32_t *ptr;
+	ptr = (uint32_t *)__CCR;
+
+	*ptr |= (1 << __CCR_DIVIDE_BY_ZERO_TRAP_OFFSET);
+}
 
 /*
  * @brief This function enables the unaligned access trap.
@@ -75,7 +91,13 @@ void ARM32_CCR_enable_divide_by_zero_trap() __attribute__((always_inline));
  * @param  none
  * @return void
  */
-void ARM32_CCR_enable_unaligned_access_trap() __attribute__((always_inline));
+void ARM32_CCR_enable_unaligned_access_trap()
+{
+	volatile uint32_t *ptr;
+	ptr = (uint32_t *)__CCR;
+
+	*ptr |= (1 << __CCR_UNALIGNED_ACCESS_TRAP_OFFSET);
+}
 
 /*
  * @brief This function generates an unaligned access trap.
@@ -86,7 +108,13 @@ void ARM32_CCR_enable_unaligned_access_trap() __attribute__((always_inline));
  * @param  none
  * @return void
  */
-void ARM32_create_unaligned_access_trap() __attribute__((always_inline));
+void ARM32_create_unaligned_access_trap()
+{
+	uint8_t var;
+	uint32_t *ptr = (uint32_t *)(&var);
+
+	return;
+}
 
 /*
  * @brief This function generates a divide by zero trap
@@ -97,4 +125,9 @@ void ARM32_create_unaligned_access_trap() __attribute__((always_inline));
  * @param  none
  * @return void
  */
-uint32_t ARM32_create_divide_by_zero_trap() __attribute__((always_inline));
+void ARM32_create_divide_by_zero_trap()
+{
+	uint8_t num = (1 / 0);
+
+	return;
+}

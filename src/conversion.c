@@ -44,7 +44,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
   /*check if the integer is negative*/
   if(data < 0)
   {
-    isneg = 1;          /*integer is recognizes as negative*/
+    isneg = 1;          /*integer is recognized as negative*/
     data *= -1;         /*turns data value to positive*/
   }
 
