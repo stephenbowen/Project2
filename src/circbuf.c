@@ -91,10 +91,10 @@ CB_e CB_buffer_add_item(CB_t *buf, uint8_t data)
 		return CB_FULL_ERROR;
 	
 	/*locate next free space*/
-	if(buf->head_p == (buf->base_p + buf->length -1))
+	if(buf->head_p == (buf->base_p + buf->length))
 		buf->head_p = buf->base_p;
 
-	/*set value into free space*/
+	/*set value into free memory space*/
 	*buf->head_p = data;
 
 	/*increment count*/
@@ -114,14 +114,18 @@ CB_e CB_buffer_add_item(CB_t *buf, uint8_t data)
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_remvoe_item(CB_t *buf, uint8_t data)
+CB_e CB_buffer_remove_item(CB_t *buf, uint8_t data)
 {
 	/*verify valid pointers*/
 	if(! buf || ! buf->head_p || ! buf->base_p || ! buf->tail_p)
 		return CB_NULL_PTR_ERROR;
+
+	/*check if buffer is empty*/
+	if(buf->count == 0)
+		return CB_EMPTY_ERROR;
 	
 	/*check if tail is at the end of the buffer*/
-	if(buf->tail_p == (buf->base_p + buf->length -1))
+	if(buf->tail_p == (buf->base_p + buf->length))
 		buf->tail_p = buf->base_p;
 
 	/*set value into free space*/

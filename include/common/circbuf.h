@@ -80,7 +80,7 @@ o the buffer.
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_remvoe_item(CB_t *, uint8_t);
+CB_e CB_buffer_remove_item(CB_t *, uint8_t);
 
 /*
  * @brief This function checks if the buffer is full.

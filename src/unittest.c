@@ -566,7 +566,141 @@ void endian_test()
  */
 void buf_test()
 {
+	/*start of circular buffer test*/
+	printf("CIRCULAR BUFFER TEST\n  a)full add, remove test\n\n");
 
+	size_t length = LENGTH_8;       /*define the length of the buffer*/
+	CB_t *buf;                    	/*declare buffer structure*/
+	uint8_t data = 0xFF;
+	uint8_t fail = 0;               /*flag to detect fail condition*/
+
+	/*initialize the structure and buffer memory*/
+	CB_init(&buf, length);
+
+	/*check for valid pointer*/
+	if(buf == NULL)
+		printf("Fail: Null Pointer\n");
+	else
+		printf("Pass: Valid Pointer\n");
+
+	/*check add and remvoe for the full length of the buffer*/
+	for(uint8_t x = 0 ; x < length ; x++)
+	{
+		/*check propper addresses of head and tail*/
+		if(buf->head_p != buf->tail_p)
+			fail = 1;
+
+		CB_buffer_add_item(buf, x);
+		CB_buffer_remove_item(buf, x);
+
+		/*check propper data in head and tail*/
+		if(*(buf->head_p - 1) != *(buf->tail_p - 1))
+			fail = 1;
+
+		printf("head: %d\n", *(buf->head_p - 1));
+		printf("tail: %d\n", *(buf->tail_p - 1));
+	}
+
+	if(fail == 0)
+		printf("Pass: Full Length Add, Remove\n\n");
+	else
+		printf("Fail: Full Length Add, Remove\n\n");
+
+	fail = 0;
+
+/******************************************************************************/
+	/*start of check full test*/
+	printf("  b)check full test\n\n");
+
+	CB_e status;       /*declare status enumeration*/
+
+	/*fill the buffer*/
+	for(uint8_t x = 0 ; x < length ; x++)
+	{
+		CB_buffer_add_item(buf, x);
+
+		printf("head: %d\n", *(buf->head_p - 1));
+	}
+
+	status = CB_is_full(buf);
+
+	if(status == (CB_e)CB_FULL_ERROR)
+		printf("Pass: Buffer is full\n\n");
+	else
+		printf("Fail: Buffer is not full\n\n");
+
+/******************************************************************************/
+	/*start of check empty test*/
+	printf("  c)check empty test\n\n");
+
+	/*empty the buffer*/
+	for(uint8_t x = 0 ; x < length ; x++)
+	{
+		CB_buffer_remove_item(buf, x);
+
+		printf("tail: %d\n", *(buf->tail_p - 1));
+	}
+
+	status = CB_is_empty(buf);
+
+	if(status == (CB_e)CB_EMPTY_ERROR)
+		printf("Pass: Buffer is empty\n\n");
+	else
+		printf("Fail: Buffer is not empty\n\n");
+
+/******************************************************************************/
+	/*start of wrap add/remove test*/
+	printf("  d)wrap add test\n\n");
+
+	/*add and remove one at at time through the buffer twice*/
+	for(uint8_t x = 0 ; x < LENGTH_16 ; x++)
+	{
+		CB_buffer_add_item(buf, x);
+		CB_buffer_remove_item(buf, x);
+
+		printf("head address of buf member %d: %p\n", ((8+x) % 8), (buf->head_p - 1));
+		printf("tail address of buf member %d: %p\n", ((8+x) % 8), (buf->tail_p - 1));
+	}
+
+		printf("Verify successful rollover by observation\n\n");
+
+/******************************************************************************/
+	/*start of overfill test*/
+	printf("  e)overfill test\n\n");
+
+	/*overfill the buffer*/
+	for(uint8_t x = 0 ; x < LENGTH_16 ; x++)
+	{
+		CB_buffer_add_item(buf, x);
+
+		printf("head: %d\n", *(buf->head_p - 1));
+		printf("head address: %p\n", (buf->head_p - 1));
+	}
+
+	/*verify head stops incrementing if buffer is full*/
+	if(*(buf->head_p) != (*(buf->head_p -1)))
+		printf("Pass: Buffer failed to overwrite data\n\n");
+	else
+		printf("Fail: Buffer overwrote data\n\n");
+
+/******************************************************************************/
+	/*start of over empty test*/
+	printf("  e)over empty test\n\n");
+
+	/*overfill the buffer*/
+	for(uint8_t x = 0 ; x < LENGTH_16 ; x++)
+	{
+		CB_buffer_remove_item(buf, x);
+
+		printf("tail: %d\n", *(buf->tail_p - 1));
+		printf("tail address: %p\n", (buf->tail_p - 1));
+	}
+
+	/*verify tail stops incrementing if buffer is empty*/
+	if(*(buf->tail_p) != (*(buf->tail_p -1)))
+		printf("Pass: Buffer failed to remove empty data\n\n");
+	else
+		printf("Fail: Buffer removed empty data\n\n");
 
 	return;
 }
