@@ -671,14 +671,14 @@ void buf_test()
 	/*overfill the buffer*/
 	for(uint8_t x = 0 ; x < LENGTH_16 ; x++)
 	{
-		CB_buffer_add_item(buf, x);
+		status = CB_buffer_add_item(buf, x);
 
 		printf("head: %d\n", *(buf->head_p - 1));
 		printf("head address: %p\n", (buf->head_p - 1));
 	}
 
 	/*verify head stops incrementing if buffer is full*/
-	if(*(buf->head_p) != (*(buf->head_p -1)))
+	if(status == CB_FULL_ERROR)
 		printf("Pass: Buffer failed to overwrite data\n\n");
 	else
 		printf("Fail: Buffer overwrote data\n\n");
@@ -690,14 +690,14 @@ void buf_test()
 	/*overfill the buffer*/
 	for(uint8_t x = 0 ; x < LENGTH_16 ; x++)
 	{
-		CB_buffer_remove_item(buf, x);
+		status = CB_buffer_remove_item(buf, x);
 
 		printf("tail: %d\n", *(buf->tail_p - 1));
 		printf("tail address: %p\n", (buf->tail_p - 1));
 	}
 
 	/*verify tail stops incrementing if buffer is empty*/
-	if(*(buf->tail_p) != (*(buf->tail_p -1)))
+	if(status == CB_EMPTY_ERROR)
 		printf("Pass: Buffer failed to remove empty data\n\n");
 	else
 		printf("Fail: Buffer removed empty data\n\n");
