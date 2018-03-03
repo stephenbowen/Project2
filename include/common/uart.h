@@ -10,6 +10,10 @@
 #include <stdint.h>
 #include "MKL25Z4.h"
 
+#define OVER_SAMPLE_16 (16)
+#define CLOCK_48MHZ    (48000000)
+#define UART0_IRQ      (12)
+
 /*
  * @brief This function configures the UART module.
  *
@@ -75,4 +79,4 @@ void UART_receive_n(uint8_t *, uint16_t);
  * @param none
  * @return void
  */
-void IRQHandler();
+static inline void IRQHandler();

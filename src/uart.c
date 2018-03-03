@@ -11,6 +11,7 @@
 #include "MKL25Z4.h"
 #include "system_MKL25Z4.h"
 #include "uart.h"
+#include "circbuf.h"
 
 /*
  * @brief This function configures the UART module.
@@ -27,13 +28,13 @@ void UART_configure(uint32_t baudrate)
 	SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
 
 	/*disable transmit and receive*/
-	UART0->C2 &= ~UART0_C2_TE_MASK & ~UART0_C2_RE_MASK;
+	UART0_C2 &= ~UART0_C2_TE_MASK & ~UART0_C2_RE_MASK;
 
 	/*set remaining control registers*/
-	UART0->C1 = 0x00;    /*8 bit, no parity, others: don't care*/
-	UART0->C3 = 0x00;
-	UART0->C4 = 0x00;
-	UART0->C5 = 0x00;    /*DMA disabled*/
+	UART0_C1 = 0x00;    /*8 bit, no parity, others: don't care*/
+	UART0_C3 = 0x00;
+	UART0_C4 = 0x00;
+	UART0_C5 = 0x00;    /*DMA disabled*/
 
 	/*select clock source (FLL/PL)*/
 	SIM_SOPT2 &= ~SIM_SOPT2_UART0SRC_MASK;
@@ -42,19 +43,19 @@ void UART_configure(uint32_t baudrate)
 	/*calculate baud rate divisor*/
 	uint16_t divisor = (CLOCK_48MHZ / OVER_SAMPLE_16) / baudrate;
 	/*configure over sample rate (OSR)*/
-	UART0->C4 = UART0_C4_OSR(OVER_SAMPLE_16 - 1);
+	UART0_C4 = UART0_C4_OSR(OVER_SAMPLE_16 - 1);
 
 	/*set BR divisor into BDH and BDL registers*/
-	UART0->BDH &= ~UART0_BDH_SBR_MASK;
-	UART0->BDH |=  UART0_BDH_SBR(divisor);
-	UART0->BDL &= ~UART0_BDL_SBR_MASK;
-	UART0->BDL |=  UART0_BDL_SBR(divisor);
+	UART0_BDH &= ~UART0_BDH_SBR_MASK;
+	UART0_BDH |=  UART0_BDH_SBR(divisor);
+	UART0_BDL &= ~UART0_BDL_SBR_MASK;
+	UART0_BDL |=  UART0_BDL_SBR(divisor);
 
 	/*enable UART transmit and receive*/
-	UART0->C2 |= UART0_C2_TE_MASK | UART0_C2_RE_MASK;
+	UART0_C2 |= UART0_C2_TE_MASK | UART0_C2_RE_MASK;
 
 	/*enable UART transmit and receive interrupts*/
-	UART0->C2 |= UART0_C2_TIE_MASK | UART0_C2_RIE_MASK;
+	UART0_C2 |= UART0_C2_TIE_MASK | UART0_C2_RIE_MASK;
 
 	return;
 }
@@ -68,7 +69,16 @@ void UART_configure(uint32_t baudrate)
  * @param uint8_t
  * @return void
  */
-void UART_send(uint8_t *);
+void UART_send(uint8_t *data)
+{
+	/*Wait until the tx buffer is empty, then put the data into the tx buffer
+    for tranmit*/
+	while((UART0_S1 & UART_S1_TDRE_MASK) == 0)
+		;
+	UART0_D = *data;
+
+	return;
+}
 
 /*
  * @brief This function transmits n bytes of data.
@@ -79,7 +89,21 @@ void UART_send(uint8_t *);
  * @param uint8_t *, uint16_t
  * @return void
  */
-void UART_send_n(uint8_t *, uint16_t);
+void UART_send_n(uint8_t *data, uint16_t length)
+{
+	/*for each character, wait until the tx buffer is empty, then put the data
+	  into the tx buffer for tranmit*/
+	for(uint8_t i = 0 ; i < length ; i++)
+	{
+		while((UART0_S1 & UART_S1_TDRE_MASK) == 0)
+			;
+
+		UART0_D = *data;
+		data++;
+	}
+
+	return;
+}
 
 /*
  * @brief This function receives a byte of data.
@@ -90,7 +114,18 @@ void UART_send_n(uint8_t *, uint16_t);
  * @param uint8_t
  * @return void
  */
-void UART_receive(uint8_t *);
+void UART_receive(uint8_t *data)
+{
+	/*for each character, wait until the rx buffer is filled. Then assign that
+    value to the data register.*/
+
+	while(CB_is_empty(rx_buf))
+		;
+
+	*data = UART0_D;
+
+	return;
+}
 
 /*
  * @brief This function receives n bytes of data.
@@ -101,7 +136,21 @@ void UART_receive(uint8_t *);
  * @param uint8_t *, uint16_t
  * @return void
  */
-void UART_receive_n(uint8_t *, uint16_t);
+void UART_receive_n(uint8_t *data, uint16_t length)
+{
+	/*for each character, wait until the rx buffer is filled. Then assign that
+    value to the data register.*/
+	for(uint8_t i = length ; i > 0 ; i--)
+	{
+		while(CB_is_empty(rx_buf))
+			;
+
+		*data = UART0_D;
+		data++;
+	}
+
+	return;
+}
 
 /*
  * @brief This function handles the Tx and Rx interrupts.
@@ -126,6 +175,7 @@ void IRQHandler()
 		/*if the buffer is empty, clear the interrupt flag*/
 		if(CB_is_empty(tx_buf))
 			UART0_C2 &= ~UART_C2_TIE_MASK;
+	}
 
 	/*if the receive interrupt has been enabled and the buffer is not full,
     send the buffer data to the UART data register.*/

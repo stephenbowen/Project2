@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define BUFFER_NOT_FULL  0
-#define BUFFER_NOT_EMPTY 0
+#define BUFFER_NOT_FULL  (0)
+#define BUFFER_NOT_EMPTY (0)
 
 /*Circular Buffer structure definition*/
 typedef struct
