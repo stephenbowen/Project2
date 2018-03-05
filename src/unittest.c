@@ -702,5 +702,20 @@ void buf_test()
 	else
 		printf("Fail: Buffer removed empty data\n\n");
 
+/******************************************************************************/
+	/*start of generic data type test*/
+	printf("  f)generic data type test\n\n");
+
+	uint8_t   unsigned8 = 255;
+	uint16_t  unsigned16 = 65535;
+	uint32_t  unsigned32 = 4000000;
+
+		CB_buffer_add_item(buf, unsigned8);
+		printf("head: %d\n", *(buf->head_p - 1));
+		CB_buffer_add_item(buf, unsigned16);
+		printf("head: %d\n", *(buf->head_p - 1));
+		CB_buffer_add_item(buf, unsigned32);
+		printf("head: %d\n", *(buf->head_p - 1));
+
 	return;
 }

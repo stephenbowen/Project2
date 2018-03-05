@@ -30,7 +30,7 @@ CB_e CB_init(CB_t **buf, size_t length)
 		return CB_NULL_PTR_ERROR;
 
 	/*allocate buffer memory*/
-	(*buf)->base_p = (uint8_t *) malloc(length * sizeof((*buf)->base_p));
+	(*buf)->base_p = (void *) malloc(length * sizeof((*buf)->base_p));
 
 	/*verify successful allocation*/
 	if(*buf == NULL)
@@ -80,7 +80,7 @@ CB_e CB_destroy(CB_t **buf)
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_add_item(CB_t *buf, uint8_t data)
+CB_e CB_buffer_add_item(CB_t *buf, size_t data)
 {
 	/*verify valid pointers*/
 	if(! buf || ! buf->head_p || ! buf->base_p || ! buf->tail_p)
@@ -114,7 +114,7 @@ CB_e CB_buffer_add_item(CB_t *buf, uint8_t data)
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_remove_item(CB_t *buf, uint8_t data)
+CB_e CB_buffer_remove_item(CB_t *buf, size_t data)
 {
 	/*verify valid pointers*/
 	if(! buf || ! buf->head_p || ! buf->base_p || ! buf->tail_p)
@@ -192,7 +192,7 @@ CB_e CB_is_empty(CB_t *buf)
  * @param CB_t *, size_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_peek(CB_t *buf, size_t position, uint8_t *data)
+CB_e CB_peek(CB_t *buf, size_t position, size_t *data)
 {
 	/*verify valid pointer*/
 	if(buf == NULL)

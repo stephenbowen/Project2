@@ -15,9 +15,9 @@
 /*Circular Buffer structure definition*/
 typedef struct
 {
-	volatile uint8_t *base_p;  /*CB base pointer */
-	volatile uint8_t *head_p;  /*CB head pointer */
-	volatile uint8_t *tail_p;  /*CB tail pointer */
+	volatile size_t *base_p;  /*CB base pointer */
+	volatile size_t *head_p;  /*CB head pointer */
+	volatile size_t *tail_p;  /*CB tail pointer */
 	volatile size_t length;    /*length of the CB*/
 	volatile size_t count;     /*number of elements in the CB*/
 } CB_t;
@@ -65,7 +65,7 @@ CB_e CB_destroy(CB_t **);
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_add_item(CB_t *, uint8_t);
+CB_e CB_buffer_add_item(CB_t *, size_t);
 
 /*
  * @brief This function removes an item t  *data = *(buf->base + position -1);
@@ -80,7 +80,7 @@ o the buffer.
  * @param CB_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_buffer_remove_item(CB_t *, uint8_t);
+CB_e CB_buffer_remove_item(CB_t *, size_t);
 
 /*
  * @brief This function checks if the buffer is full.
@@ -114,4 +114,4 @@ __attribute__((always_inline)) static inline CB_e CB_is_empty(CB_t *);
  * @param CB_t *, size_t *, uint8_t
  * @return CB_e (circular buffer enumeration)
  */
-CB_e CB_peek(CB_t *, size_t, uint8_t *);
+CB_e CB_peek(CB_t *, size_t, size_t *);
